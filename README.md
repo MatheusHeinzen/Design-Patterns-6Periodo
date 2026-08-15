@@ -39,3 +39,9 @@ Ao final da implementação reflita:
 javac PlanetasPrinter.java
 java PlanetasPrinter
 ```
+
+---
+
+## Reflexão:
+1. Sim, há código duplicado nos printers, mesmo que não seja um copia e cola, há muita semelhança entre ambas as classes.
+2. Iria estender de TablePrinter, não precisando duplicar a lógica da impressão da tabela mas outros código ficariam duplicados também.
