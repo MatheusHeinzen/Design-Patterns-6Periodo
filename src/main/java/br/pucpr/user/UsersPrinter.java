@@ -1,49 +1,48 @@
 package br.pucpr.user;
 
+import br.pucpr.table.TableData;
 import java.util.ArrayList;
 
-public class UsersPrinter {
-  public void print(ArrayList<User> users, boolean maskCpf, boolean alignRight, Theme theme) {
-    if (users == null || users.isEmpty()) {
-      System.out.println("ERRO: Lista de usuários vazia ou nula.");
-      return;
-    }
-    final var borderChar = theme.getBorderChar();
+public class UsersPrinter implements TableData {
+  private static final String[] HEADERS = {"ID", "NOME", "EMAIL", "CPF"};
 
-    // Borda superior e cabeçalho
-    final var BORDER_WIDTH = 74;
-    var sb = new StringBuilder();
-    sb.repeat(borderChar, BORDER_WIDTH).append("\n");
-    sb.append(String.format("| %-5s | %-20s | %-22s | %-14s |%n", "ID", "NOME", "EMAIL", "CPF"));
-    sb.repeat(borderChar, BORDER_WIDTH).append("\n");
-    for (var user : users) {
-      if (user == null) {
-        continue;
-      }
-      sb.append(
-          String.format(
-              "| %-5s | %-20s | %-22s | %-14s |%n",
-              formatId(user.id()),
-              formatName(user),
-              validateAndFormatEmail(user.email()),
-              formatCpf(user.cpf(), maskCpf)));
-    }
-    // Borda inferior
-    sb.repeat(borderChar, BORDER_WIDTH).append("\n");
+  private final ArrayList<User> users;
+  private final boolean maskCpf;
 
-    // Espaçamento
-    if (alignRight) {
-      var lines = sb.toString().split("\n");
-      for (var line : lines) {
-        System.out.println("                    " + line);
-      }
-    } else {
-      System.out.print(sb);
-    }
+  public UsersPrinter(ArrayList<User> users, boolean maskCpf) {
+    this.users = users;
+    this.maskCpf = maskCpf;
   }
 
-  private static String formatId(Long id) {
-    return id != null ? id.toString() : "0";
+  @Override
+  public int getColumnCount() {
+    return HEADERS.length;
+  }
+
+  @Override
+  public String getHeader(int column) {
+    return HEADERS[column];
+  }
+
+  @Override
+  public int getRowCount() {
+    return users == null ? 0 : users.size();
+  }
+
+  @Override
+  public String getCell(int row, int column) {
+    var user = users.get(row);
+    return switch (column) {
+      case 0 -> user.id() != null ? user.id().toString() : "0";
+      case 1 -> formatName(user.name());
+      case 2 -> user.email() == null || !user.email().contains("@") ? "INVÁLIDO" : user.email();
+      case 3 -> formatCpf(user.cpf(), maskCpf);
+      default -> "";
+    };
+  }
+
+  private static String formatName(String name) {
+    return name == null || name.isEmpty() ? "NÃO INFORMADO" : name;
   }
 
   private static String formatCpf(String cpf, boolean mask) {
@@ -60,20 +59,5 @@ public class UsersPrinter {
         + cpf.substring(6, 9)
         + "-"
         + cpf.substring(9, 11);
-  }
-
-  private static String validateAndFormatEmail(String email) {
-    return email == null || !email.contains("@") ? "INVÁLIDO" : email;
-  }
-
-  private static String formatName(User user) {
-    var name = user.name();
-    if (name == null || name.isEmpty()) {
-      return "NÃO INFORMADO";
-    }
-    if (name.length() > 20) {
-      name = name.substring(0, 17) + "...";
-    }
-    return name;
   }
 }
