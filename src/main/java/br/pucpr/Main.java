@@ -9,25 +9,31 @@ import br.pucpr.planet.Planet;
 import br.pucpr.planet.PlanetsTableData;
 import br.pucpr.table.Table;
 import br.pucpr.table.model.ColumnTableData;
+import br.pucpr.user.CpfColumn;
+import br.pucpr.user.EmailColumn;
 import br.pucpr.user.IdColumn;
+import br.pucpr.user.NameColumn;
 import br.pucpr.user.User;
 import java.util.ArrayList;
 
 public class Main {
   public static void main(String[] args) {
     final var usuarios = new ArrayList<User>();
-    usuarios.add(
-        new User(101L, "Carlos Eduardo de Souza", "carlos.souza@email.com", "12345678901"));
+    usuarios.add(new User(101L, "Carlos Eduardo de Souza", "carlos.souza@email.com", "12345678901"));
     usuarios.add(new User(102L, "Ana Maria Silva", "ana.silva@email.com", "98765432100"));
-    usuarios.add(
-        new User(103L, "João Pedro de Alcântara Bragança", "joao.pedro@email.com", "45678912345"));
+    usuarios.add(new User(103L, "João Pedro de Alcântara Bragança", "joao.pedro@email.com", "45678912345"));
     usuarios.add(new User(104L, "Mariana Costa", "marianacosta.email.com", "11122233344"));
     usuarios.add(new User(105L, "Lucas Mendes", "lucas@email.com", "12345"));
     usuarios.add(new User(106L, "", "beatriz@email.com", "55566677788"));
 
     System.out.println("IMPRIMINDO USUARIOS");
     System.out.println("-------------------");
-    new Table(new ColumnTableData<User>(usuarios, new IdColumn()), LIGHT, true).print();
+    new Table(
+            new ColumnTableData<>(
+                usuarios, new IdColumn(), new NameColumn(), new CpfColumn(), new EmailColumn()),
+            LIGHT,
+            true)
+        .print();
 
     final var planetas = new ArrayList<Planet>();
     planetas.add(new Planet("Mercúrio", 4879, 57_910_000L, ROCK));
